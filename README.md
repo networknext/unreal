@@ -6,7 +6,7 @@ This repository contains the UE5 plugin for Network Next.
 
 It's tested working with Unreal Engine 5.3.2
 
-The plugin supports Win64, Linux, Mac. If you are a console developer contact us for PS4, PS5, XBoxOne (GDK) and SeriesX (GDK) support.
+The plugin supports Win64, Linux, Mac. If you are a console developer please contact us for PS4, PS5, XBoxOne (GDK) and SeriesX (GDK) support.
 
 # Usage
 
