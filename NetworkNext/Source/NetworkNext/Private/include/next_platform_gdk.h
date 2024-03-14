@@ -20,19 +20,52 @@
     NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#ifndef NEXT_PACKET_FILTER_H
-#define NEXT_PACKET_FILTER_H
-
 #include "next.h"
 
-void next_generate_pittle( uint8_t * output, const uint8_t * from_address, const uint8_t * to_address, uint16_t packet_length );
+#ifndef NEXT_PLATFORM_GDK_H
+#define NEXT_PLATFORM_GDK_H
 
-void next_generate_chonkle( uint8_t * output, const uint8_t * magic, const uint8_t * from_address, const uint8_t * to_address, uint16_t packet_length );
+#ifdef _GAMING_XBOX
 
-bool next_basic_packet_filter( const uint8_t * data, uint16_t packet_length );
+#define _WINSOCKAPI_
+#include <windows.h>
+#include <winsock2.h>
 
-void next_address_data( const next_address_t * address, uint8_t * address_data );
+// -------------------------------------
 
-bool next_advanced_packet_filter( const uint8_t * data, const uint8_t * magic, const uint8_t * from_address, const uint8_t * to_address, uint16_t packet_length );
+#pragma warning(disable:4996)
 
-#endif // #ifndef NEXT_PACKET_FILTER_H
+#if _WIN64
+    typedef uint64_t next_platform_socket_handle_t;
+#else
+    typedef _W64 unsigned int next_platform_socket_handle_t;
+#endif
+
+struct next_platform_socket_t
+{
+    void * context;
+    bool ipv6;
+    next_platform_socket_handle_t handle;
+};
+
+// -------------------------------------
+
+struct next_platform_thread_t
+{
+    void* context;
+    HANDLE handle;
+};
+
+// -------------------------------------
+
+struct next_platform_mutex_t
+{
+    bool ok;
+    CRITICAL_SECTION handle;
+};
+
+// -------------------------------------
+
+#endif // #ifdef _GAMING_XBOX
+
+#endif // #ifndef NEXT_PLATFORM_GDK_H

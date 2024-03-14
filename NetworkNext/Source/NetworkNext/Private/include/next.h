@@ -51,12 +51,12 @@
 
 #endif // !NEXT_DEVELOPMENT
 
+#define NEXT_MTU                                               1200
+
+#define NEXT_MAX_PACKET_BYTES                                  1384
+
 #define NEXT_OK                                                   0
 #define NEXT_ERROR                                               -1
-
-#define NEXT_MTU                                               1300
-
-#define NEXT_MAX_PACKET_BYTES                                  4096
 
 #define NEXT_LOG_LEVEL_NONE                                       0
 #define NEXT_LOG_LEVEL_ERROR                                      1
@@ -501,6 +501,14 @@ NEXT_EXPORT_FUNC void next_server_set_send_packet_to_address_callback( struct ne
 NEXT_EXPORT_FUNC void next_server_set_payload_receive_callback( struct next_server_t * server, int (*callback) ( void * data, const struct next_address_t * address, const uint8_t * payload_data, int payload_bytes ), void * callback_data );
 
 NEXT_EXPORT_FUNC bool next_server_direct_only( struct next_server_t * server );
+
+// -----------------------------------------
+
+NEXT_EXPORT_FUNC bool next_packet_tagging_can_be_enabled();
+
+NEXT_EXPORT_FUNC void next_enable_packet_tagging();
+
+NEXT_EXPORT_FUNC void next_disable_packet_tagging();
 
 // -----------------------------------------
 

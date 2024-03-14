@@ -20,19 +20,50 @@
     NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#ifndef NEXT_PACKET_FILTER_H
-#define NEXT_PACKET_FILTER_H
-
 #include "next.h"
 
-void next_generate_pittle( uint8_t * output, const uint8_t * from_address, const uint8_t * to_address, uint16_t packet_length );
+#ifndef NEXT_SWITCH_H
+#define NEXT_SWITCH_H
 
-void next_generate_chonkle( uint8_t * output, const uint8_t * magic, const uint8_t * from_address, const uint8_t * to_address, uint16_t packet_length );
+#if NEXT_PLATFORM == NEXT_PLATFORM_SWITCH
 
-bool next_basic_packet_filter( const uint8_t * data, uint16_t packet_length );
+#include "next_address.h"
 
-void next_address_data( const next_address_t * address, uint8_t * address_data );
+#include <nn/os.h>
 
-bool next_advanced_packet_filter( const uint8_t * data, const uint8_t * magic, const uint8_t * from_address, const uint8_t * to_address, uint16_t packet_length );
+// -------------------------------------
 
-#endif // #ifndef NEXT_PACKET_FILTER_H
+typedef int next_platform_socket_handle_t;
+
+struct next_platform_socket_t
+{
+    next_platform_socket_handle_t handle;
+    next_address_t address;
+    int type;
+    float timeout_seconds;
+    int send_buffer_size;
+    int receive_buffer_size;
+    void * context;
+};
+
+// -------------------------------------
+
+struct next_platform_thread_t
+{
+    nn::os::ThreadType handle;
+    char * stack;
+    void * context;
+};
+
+// -------------------------------------
+
+struct next_platform_mutex_t
+{
+    nn::os::MutexType handle;
+};
+
+// -------------------------------------
+
+#endif // #if NEXT_PLATFORM == NEXT_PLATFORM_SWITCH
+
+#endif // #ifndef NEXT_SWITCH_H
