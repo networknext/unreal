@@ -56,4 +56,39 @@ public:
      */
     UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "Network Next", meta = (WorldContext = "WorldContextObject", DisplayName = "Get Packet Loss"))
     static float GetPacketLoss(UObject* WorldContextObject);
+
+	/**
+	 * Is the server ready for clients to connect?
+	 * Please wait until this is true before reporting to your matchmaker that this server is ready for clients to connect to it.
+	 * It will time out and become ready in ~15 seconds no matter what, so the server will never get stuck in the waiting to be ready.
+	 */
+
+	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "Network Next", meta = (WorldContext = "WorldContextObject", DisplayName = "Is Server Ready?"))
+    static bool IsServerReady(UObject* WorldContextObject);
+
+    /**
+     * Does the platform support enabling DSCP packet tagging?
+	 * This is a new feature that primarily helps reduce jitter and packet loss over Wi-Fi connections.
+	 * Please provide a user interface within you game to allow users to enable packet tagging when this returns true. 
+	 * The only platform this returns false on is XBox, and this is because the XBox platform already provides a way for
+	 * the player to enable/disable packet tagging in their system dialogs. On other platforms, you can have packet tagging
+	 * too, but you need to let your user enable it manually. It is important to leave it off by default (as it is) because
+	 * it can cause problems for players with older routers (eg. all packets get dropped).
+     */
+    UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "Network Next", meta = (WorldContext = "WorldContextObject", DisplayName = "Can Packet Tagging Be Enabled?"))
+    static bool CanPacketTaggingBeEnabled(UObject* WorldContextObject);
+
+    /**
+     * Enable DSCP packet tagging (it is disabled by default)
+	 * Takes effect on the next client or server create. Has no effect on any client or server socket already created.
+     */
+    UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "Network Next", meta = (WorldContext = "WorldContextObject", DisplayName = "Enable Packet Tagging"))
+    static void EnablePacketTagging(UObject* WorldContextObject);
+
+    /**
+     * Disable DSCP packet tagging
+	 * Takes effect on the next client or server create. Has no effect on any client or server socket already created.
+     */
+    UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "Network Next", meta = (WorldContext = "WorldContextObject", DisplayName = "Disable Packet Tagging"))
+    static void DisablePacketTagging(UObject* WorldContextObject);
 };

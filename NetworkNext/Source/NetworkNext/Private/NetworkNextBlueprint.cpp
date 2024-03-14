@@ -27,6 +27,7 @@
 #include "Runtime/Engine/Classes/GameFramework/PlayerController.h"
 #include "Runtime/Engine/Classes/Engine/NetConnection.h"
 #include "IPAddress.h"
+#include "next.h"
 
 void UNetworkNextBlueprint::UpgradePlayer(UObject* WorldContextObject, APlayerController* PlayerController, const FString& UserId)
 {
@@ -126,4 +127,42 @@ float UNetworkNextBlueprint::GetPacketLoss(UObject* WorldContextObject)
         return 0.0f;
 
     return ClientSocket->GetPacketLoss();
+}
+
+bool UNetworkNextBlueprint::IsServerReady(UObject* WorldContextObject)
+{
+    if (WorldContextObject == nullptr)
+        return false;
+
+    UWorld* World = WorldContextObject->GetWorld();
+
+    if (World == nullptr)
+        return false;
+
+	UNetworkNextNetDriver* NetDriver = Cast<UNetworkNextNetDriver>(World->GetNetDriver());
+
+    if (NetDriver == nullptr)
+        return false;
+
+    FNetworkNextSocketServer* ServerSocket = NetDriver->GetServerSocket();
+
+    if (ServerSocket == nullptr)
+        return false;
+
+	return ServerSocket->IsReady();
+}
+
+bool UNetworkNextBlueprint::CanPacketTaggingBeEnabled(UObject* WorldContextObject)
+{
+	return next_packet_tagging_can_be_enabled();
+}
+
+void UNetworkNextBlueprint::EnablePacketTagging(UObject* WorldContextObject)
+{
+	next_enable_packet_tagging();
+}
+
+void UNetworkNextBlueprint::DisablePacketTagging(UObject* WorldContextObject)
+{
+	next_disable_packet_tagging();
 }

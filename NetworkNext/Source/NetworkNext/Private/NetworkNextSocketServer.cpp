@@ -224,3 +224,11 @@ void FNetworkNextSocketServer::PacketReceived(next_server_t* server, void* conte
 
     self->PacketQueue.Enqueue({ *client_address, packet_data_copy, packet_bytes });
 }
+
+bool FNetworkNextSocketServer::IsReady()
+{
+	if (NetworkNextServer == NULL)
+		return false;
+
+	return next_server_ready(NetworkNextServer);
+}

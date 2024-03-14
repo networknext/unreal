@@ -113,8 +113,12 @@ public:
      * Call this to enabling monitoring and (potentially) acceleration for a client address connected to this server.
      * Typically, this is called via blueprint on the GameMode object after a player joins, via the Network Next blueprint function "UpgradePlayer".
      */
-
     void UpgradeClient(TSharedPtr<const FInternetAddr> RemoteAddr, const FString& UserId);
+
+	/**
+	 * Returns true when the server is ready to receive client connections.
+	 */
+	bool IsReady();
 
 protected:
 
