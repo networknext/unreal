@@ -1,5 +1,5 @@
 /*
-    Network Next. Copyright © 2017 - 2024 Network Next, Inc.
+    Network Next. Copyright © 2017 - 2025 Network Next, Inc.
 
     Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following
     conditions are met:
@@ -159,10 +159,10 @@ bool FNetworkNextSocketServer::RecvFrom(uint8* Data, int32 BufferSize, int32& By
     BytesRead = Packet.packet_bytes;
     FMemory::Free(Packet.packet_data);
 
-    // Convert snapshot address to string.
-    char snapshot_address_string[NEXT_MAX_ADDRESS_STRING_LENGTH];
-    next_address_to_string(&Packet.from, snapshot_address_string);
-    FString UnrealAddressString = FString(ANSI_TO_TCHAR(snapshot_address_string));
+    // Convert next address to string.
+    char next_address_string[NEXT_MAX_ADDRESS_STRING_LENGTH];
+    next_address_to_string(&Packet.from, next_address_string);
+    FString UnrealAddressString = FString(ANSI_TO_TCHAR(next_address_string));
     bool bIsValid;
     Source.SetIp(*UnrealAddressString, bIsValid);
     Source.SetPort(Packet.from.port);

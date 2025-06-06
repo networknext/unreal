@@ -1,5 +1,5 @@
 /*
-    Network Next. Copyright © 2017 - 2024 Network Next, Inc.
+    Network Next. Copyright © 2017 - 2025 Network Next, Inc.
 
     Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following
     conditions are met:
@@ -27,9 +27,6 @@ public class NetworkNext : ModuleRules
     public NetworkNext(ReadOnlyTargetRules Target) : base(Target)
     {
         PCHUsage = ModuleRules.PCHUsageMode.UseExplicitOrSharedPCHs;
-
-        // todo: remove once converted fully to network next sdk
-        PublicDefinitions.Add("SNAPSHOT_UNREAL_ENGINE=1");
 
         PublicDefinitions.Add("NETWORK_NEXT_UNREAL_ENGINE=1");
 
@@ -62,7 +59,6 @@ public class NetworkNext : ModuleRules
         } 
         else if (Target.Platform.ToString() == "PS4")
         {
-            // todo: do we still need to do this?
             string SDKDir = System.Environment.GetEnvironmentVariable("SCE_ORBIS_SDK_DIR");
             string LibDir = System.IO.Path.Combine(SDKDir, "target", "lib");
             PublicAdditionalLibraries.Add(System.IO.Path.Combine(LibDir, "libSceSecure.a"));

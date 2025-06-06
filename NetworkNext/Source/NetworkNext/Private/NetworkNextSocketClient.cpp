@@ -1,5 +1,5 @@
 /*
-    Network Next. Copyright © 2017 - 2024 Network Next, Inc.
+    Network Next. Copyright © 2017 - 2025 Network Next, Inc.
 
     Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following
     conditions are met:
@@ -89,7 +89,7 @@ bool FNetworkNextSocketClient::Bind(const FInternetAddr& Addr)
         return false;
     }
 
-    UE_LOG(LogNetworkNext, Display, TEXT("Created snapshot client"));
+    UE_LOG(LogNetworkNext, Display, TEXT("Created network next client"));
 
     const int ClientPort = next_client_port(NetworkNextClient);
 
