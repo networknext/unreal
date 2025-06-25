@@ -1,23 +1,7 @@
 /*
     Network Next. Copyright © 2017 - 2025 Network Next, Inc.
-
-    Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following
-    conditions are met:
-
-    1. Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
-
-    2. Redistributions in binary form must reproduce the above copyright notice, this list of conditions
-       and the following disclaimer in the documentation and/or other materials provided with the distribution.
-
-    3. Neither the name of the copyright holder nor the names of its contributors may be used to endorse or promote
-       products derived from this software without specific prior written permission.
-
-    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,
-    INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
-    IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
-    CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
-    OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
-    NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+    
+    Licensed under the Network Next Source Available License 1.0
 */
 
 #include "next_client.h"
@@ -580,8 +564,10 @@ int next_client_internal_send_packet_to_server( next_client_internal_t * client,
         return NEXT_ERROR;
     }
 
+#if NEXT_ADVANCED_PACKET_FILTER
     next_assert( next_basic_packet_filter( buffer, sizeof(buffer) ) );
     next_assert( next_advanced_packet_filter( buffer, client->current_magic, from_address_data, to_address_data, packet_bytes ) );
+#endif // #if NEXT_ADVANCED_PACKET_FILTER
 
 #if NEXT_SPIKE_TRACKING
     double start_time = next_platform_time();
@@ -634,6 +620,8 @@ void next_client_internal_process_network_next_packet( next_client_internal_t * 
         next_address_data( from, from_address_data );
         next_address_data( &client->client_external_address, to_address_data );
 
+#if NEXT_ADVANCED_PACKET_FILTER
+
         if ( packet_id != NEXT_UPGRADE_REQUEST_PACKET )
         {
             if ( !next_advanced_packet_filter( packet_data, client->current_magic, from_address_data, to_address_data, packet_bytes ) )
@@ -659,6 +647,8 @@ void next_client_internal_process_network_next_packet( next_client_internal_t * 
                 return;
             }
         }
+
+#endif // #if NEXT_ADVANCED_PACKET_FILTER
     }
 
     // upgrade request packet (not encrypted)
@@ -784,8 +774,10 @@ void next_client_internal_process_network_next_packet( next_client_internal_t * 
         next_assert( debug_packet_data );
         next_assert( debug_packet_bytes > 0 );
 
+#if NEXT_ADVANCED_PACKET_FILTER
         next_assert( next_basic_packet_filter( debug_packet_data, debug_packet_bytes ) );
         next_assert( next_advanced_packet_filter( debug_packet_data, client->current_magic, from_address_data, to_address_data, debug_packet_bytes ) );
+#endif // #if NEXT_ADVANCED_PACKET_FILTER
 
 #endif // #if NEXT_ASSERTS
 
@@ -2057,8 +2049,10 @@ void next_client_internal_update_next_pings( next_client_internal_t * client )
 
         next_assert( packet_bytes > 0 );
 
+#if NEXT_ADVANCED_PACKET_FILTER
         next_assert( next_basic_packet_filter( packet_data, packet_bytes ) );
         next_assert( next_advanced_packet_filter( packet_data, client->current_magic, from_address_data, to_address_data, packet_bytes ) );
+#endif // #if NEXT_ADVANCED_PACKET_FILTER
 
 #if NEXT_SPIKE_TRACKING
         double start_time = next_platform_time();
@@ -2894,8 +2888,10 @@ void next_client_send_packet( next_client_t * client, const uint8_t * packet_dat
 
             next_assert( direct_packet_bytes >= 0 );
 
+#if NEXT_ADVANCED_PACKET_FILTER
             next_assert( next_basic_packet_filter( direct_packet_data, direct_packet_bytes ) );
             next_assert( next_advanced_packet_filter( direct_packet_data, client->current_magic, from_address_data, to_address_data, direct_packet_bytes ) );
+#endif // #if NEXT_ADVANCED_PACKET_FILTER
 
             (void) direct_packet_data;
             (void) direct_packet_bytes;

@@ -1,23 +1,7 @@
 /*
     Network Next. Copyright © 2017 - 2025 Network Next, Inc.
-
-    Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following 
-    conditions are met:
-
-    1. Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
-
-    2. Redistributions in binary form must reproduce the above copyright notice, this list of conditions 
-       and the following disclaimer in the documentation and/or other materials provided with the distribution.
-
-    3. Neither the name of the copyright holder nor the names of its contributors may be used to endorse or promote 
-       products derived from this software without specific prior written permission.
-
-    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, 
-    INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. 
-    IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR 
-    CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; 
-    OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING 
-    NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+    
+    Licensed under the Network Next Source Available License 1.0
 */
 
 #include "next_route_manager.h"
@@ -280,8 +264,10 @@ void next_route_manager_begin_next_route( next_route_manager_t * route_manager, 
     const uint8_t * packet_data = route_manager->route_data.pending_route_request_packet_data;
     const int packet_bytes = route_manager->route_data.pending_route_request_packet_bytes;
 
+#if NEXT_ADVANCED_PACKET_FILTER
     next_assert( next_basic_packet_filter( packet_data, packet_bytes ) );
     next_assert( next_advanced_packet_filter( packet_data, magic, from_address_data, to_address_data, packet_bytes ) );
+#endif // #if NEXT_ADVANCED_PACKET_FILTER
 
     (void) packet_data;
     (void) packet_bytes;
@@ -342,8 +328,10 @@ void next_route_manager_continue_next_route( next_route_manager_t * route_manage
     const uint8_t * packet_data = route_manager->route_data.pending_continue_request_packet_data;
     const int packet_bytes = route_manager->route_data.pending_continue_request_packet_bytes;
 
+#if NEXT_ADVANCED_PACKET_FILTER
     next_assert( next_basic_packet_filter( packet_data, packet_bytes ) );
     next_assert( next_advanced_packet_filter( packet_data, magic, from_address_data, to_address_data, packet_bytes ) );
+#endif // #if NEXT_ADVANCED_PACKET_FILTER
 
     (void) packet_data;
     (void) packet_bytes;
@@ -413,8 +401,10 @@ bool next_route_manager_prepare_send_packet( next_route_manager_t * route_manage
         return false;
     }
 
+#if NEXT_ADVANCED_PACKET_FILTER
     next_assert( next_basic_packet_filter( packet_data, *packet_bytes ) );
     next_assert( next_advanced_packet_filter( packet_data, magic, from_address_data, to_address_data, *packet_bytes ) );
+#endif // #if NEXT_ADVANCED_PACKET_FILTER
 
     next_assert( *packet_bytes < NEXT_MAX_PACKET_BYTES );
 

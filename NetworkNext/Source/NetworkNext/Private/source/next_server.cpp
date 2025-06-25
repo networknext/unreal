@@ -1,23 +1,7 @@
 /*
     Network Next. Copyright © 2017 - 2025 Network Next, Inc.
-
-    Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following 
-    conditions are met:
-
-    1. Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
-
-    2. Redistributions in binary form must reproduce the above copyright notice, this list of conditions 
-       and the following disclaimer in the documentation and/or other materials provided with the distribution.
-
-    3. Neither the name of the copyright holder nor the names of its contributors may be used to endorse or promote 
-       products derived from this software without specific prior written permission.
-
-    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, 
-    INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. 
-    IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR 
-    CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; 
-    OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING 
-    NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+    
+    Licensed under the Network Next Source Available License 1.0
 */
 
 #include "next_server.h"
@@ -919,8 +903,11 @@ int next_server_internal_send_packet( next_server_internal_t * server, const nex
     }
 
     next_assert( packet_bytes > 0 );
+
+#if NEXT_ADVANCED_PACKET_FILTER
     next_assert( next_basic_packet_filter( buffer, packet_bytes ) );
     next_assert( next_advanced_packet_filter( buffer, magic, from_address_data, to_address_data, packet_bytes ) );
+#endif // #if NEXT_ADVANCED_PACKET_FILTER
 
     next_server_internal_send_packet_to_address( server, to_address, buffer, packet_bytes );
 
@@ -1175,8 +1162,10 @@ void next_server_internal_update_server_relays( next_server_internal_t * server 
                 return;
             }
 
+#if NEXT_ADVANCED_PACKET_FILTER
             next_assert( next_basic_packet_filter( packet_data, packet_bytes ) );
             next_assert( next_advanced_packet_filter( packet_data, magic, from_address_data, to_address_data, packet_bytes ) );
+#endif // #if NEXT_ADVANCED_PACKET_FILTER
 
             next_server_internal_send_packet_to_backend( server, packet_data, packet_bytes );
 
@@ -1328,8 +1317,10 @@ void next_server_internal_update_client_relays( next_server_internal_t * server 
                     return;
                 }
 
+#if NEXT_ADVANCED_PACKET_FILTER
                 next_assert( next_basic_packet_filter( packet_data, packet_bytes ) );
                 next_assert( next_advanced_packet_filter( packet_data, magic, from_address_data, to_address_data, packet_bytes ) );
+#endif // #if NEXT_ADVANCED_PACKET_FILTER
 
                 next_server_internal_send_packet_to_backend( server, packet_data, packet_bytes );
 
@@ -1625,6 +1616,8 @@ void next_server_internal_process_network_next_packet( next_server_internal_t * 
             return;
         }
 
+#if NEXT_ADVANCED_PACKET_FILTER
+
         uint8_t from_address_data[4];
         uint8_t to_address_data[4];
 
@@ -1655,6 +1648,8 @@ void next_server_internal_process_network_next_packet( next_server_internal_t * 
                 return;
             }
         }
+
+#endif // #if NEXT_ADVANCED_PACKET_FILTER
     }
 
     begin += 18;
@@ -2411,7 +2406,10 @@ void next_server_internal_process_network_next_packet( next_server_internal_t * 
         next_assert( response_bytes > 0 );
 
         next_assert( next_basic_packet_filter( response_data, response_bytes ) );
+
+#if NEXT_ADVANCED_PACKET_FILTER
         next_assert( next_advanced_packet_filter( response_data, server->current_magic, from_address_data, to_address_data, response_bytes ) );
+#endif // #if NEXT_ADVANCED_PACKET_FILTER
 
         next_server_internal_send_packet_to_address( server, from, response_data, response_bytes );
 
@@ -2488,7 +2486,10 @@ void next_server_internal_process_network_next_packet( next_server_internal_t * 
         next_assert( response_bytes > 0 );
 
         next_assert( next_basic_packet_filter( response_data, response_bytes ) );
+
+#if NEXT_ADVANCED_PACKET_FILTER
         next_assert( next_advanced_packet_filter( response_data, server->current_magic, from_address_data, to_address_data, response_bytes ) );
+#endif // #if NEXT_ADVANCED_PACKET_FILTER
 
         next_server_internal_send_packet_to_address( server, from, response_data, response_bytes );
 
@@ -2581,7 +2582,10 @@ void next_server_internal_process_network_next_packet( next_server_internal_t * 
         next_assert( pong_packet_bytes > 0 );
 
         next_assert( next_basic_packet_filter( pong_packet_data, pong_packet_bytes ) );
+
+#if NEXT_ADVANCED_PACKET_FILTER
         next_assert( next_advanced_packet_filter( pong_packet_data, server->current_magic, from_address_data, to_address_data, pong_packet_bytes ) );
+#endif // #if NEXT_ADVANCED_PACKET_FILTER
 
         next_server_internal_send_packet_to_address( server, from, pong_packet_data, pong_packet_bytes );
 
@@ -3544,7 +3548,10 @@ void next_server_internal_update_init( next_server_internal_t * server )
     }
 
     next_assert( next_basic_packet_filter( packet_data, packet_bytes ) );
+
+#if NEXT_ADVANCED_PACKET_FILTER
     next_assert( next_advanced_packet_filter( packet_data, magic, from_address_data, to_address_data, packet_bytes ) );
+#endif // #if NEXT_ADVANCED_PACKET_FILTER
 
     next_server_internal_send_packet_to_backend( server, packet_data, packet_bytes );
 
@@ -3654,8 +3661,10 @@ void next_server_internal_backend_update( next_server_internal_t * server )
             return;
         }
 
+#if NEXT_ADVANCED_PACKET_FILTER
         next_assert( next_basic_packet_filter( packet_data, packet_bytes ) );
         next_assert( next_advanced_packet_filter( packet_data, magic, from_address_data, to_address_data, packet_bytes ) );
+#endif // #if NEXT_ADVANCED_PACKET_FILTER
 
         next_server_internal_send_packet_to_backend( server, packet_data, packet_bytes );
 
@@ -3702,7 +3711,10 @@ void next_server_internal_backend_update( next_server_internal_t * server )
         }
 
         next_assert( next_basic_packet_filter( packet_data, packet_bytes ) );
+
+#if NEXT_ADVANCED_PACKET_FILTER
         next_assert( next_advanced_packet_filter( packet_data, magic, from_address_data, to_address_data, packet_bytes ) );
+#endif // #if NEXT_ADVANCED_PACKET_FILTER
 
         next_server_internal_send_packet_to_backend( server, packet_data, packet_bytes );
 
@@ -3797,12 +3809,7 @@ void next_server_internal_backend_update( next_server_internal_t * server )
                 packet.server_relay_packet_loss[j] = server->stats_server_relay_packet_loss[j];
             }
 
-            // IMPORTANT: Anonymize the client address before passing up to the backend.
-            // We do this because the IP address of a player is personal data according to GDPR.
-            next_address_t anonymized_address = session->address;
-            next_anonymize_address( &anonymized_address );
-
-            packet.client_address = anonymized_address;
+            packet.client_address = session->address;
             packet.server_address = server->server_address;
             memcpy( packet.client_route_public_key, session->client_route_public_key, NEXT_CRYPTO_BOX_PUBLICKEYBYTES );
             memcpy( packet.server_route_public_key, server->server_route_public_key, NEXT_CRYPTO_BOX_PUBLICKEYBYTES );
@@ -3854,7 +3861,10 @@ void next_server_internal_backend_update( next_server_internal_t * server )
             }
 
             next_assert( next_basic_packet_filter( packet_data, packet_bytes ) );
+
+#if NEXT_ADVANCED_PACKET_FILTER
             next_assert( next_advanced_packet_filter( packet_data, magic, from_address_data, to_address_data, packet_bytes ) );
+#endif // #if NEXT_ADVANCED_PACKET_FILTER
 
             next_server_internal_send_packet_to_backend( server, packet_data, packet_bytes );
 
@@ -3913,7 +3923,10 @@ void next_server_internal_backend_update( next_server_internal_t * server )
             }
 
             next_assert( next_basic_packet_filter( packet_data, packet_bytes ) );
+
+#if NEXT_ADVANCED_PACKET_FILTER
             next_assert( next_advanced_packet_filter( packet_data, magic, from_address_data, to_address_data, packet_bytes ) );
+#endif // #if NEXT_ADVANCED_PACKET_FILTER
 
             next_server_internal_send_packet_to_backend( server, packet_data, packet_bytes );
 
@@ -4535,7 +4548,10 @@ void next_server_send_packet( next_server_t * server, const next_address_t * to_
             next_assert( next_packet_bytes > 0 );
 
             next_assert( next_basic_packet_filter( next_packet_data, next_packet_bytes ) );
+
+#if NEXT_ADVANCED_PACKET_FILTER
             next_assert( next_advanced_packet_filter( next_packet_data, server->current_magic, from_address_data, to_address_data, next_packet_bytes ) );
+#endif // #if NEXT_ADVANCED_PACKET_FILTER
 
             next_server_send_packet_to_address( server, &session_address, next_packet_data, next_packet_bytes );
         }
@@ -4559,8 +4575,11 @@ void next_server_send_packet( next_server_t * server, const next_address_t * to_
             next_assert( direct_packet_data[0] == NEXT_DIRECT_PACKET );
 
             next_assert( next_basic_packet_filter( direct_packet_data, direct_packet_bytes ) );
-            next_assert( next_advanced_packet_filter( direct_packet_data, server->current_magic, from_address_data, to_address_data, direct_packet_bytes ) );
 
+#if NEXT_ADVANCED_PACKET_FILTER
+            next_assert( next_advanced_packet_filter( direct_packet_data, server->current_magic, from_address_data, to_address_data, direct_packet_bytes ) );
+#endif // #if NEXT_ADVANCED_PACKET_FILTER
+            
             next_server_send_packet_to_address( server, to_address, direct_packet_data, direct_packet_bytes );
         }
     }

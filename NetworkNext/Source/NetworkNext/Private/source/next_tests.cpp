@@ -1,23 +1,7 @@
 /*
     Network Next. Copyright © 2017 - 2025 Network Next, Inc.
-
-    Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following 
-    conditions are met:
-
-    1. Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
-
-    2. Redistributions in binary form must reproduce the above copyright notice, this list of conditions 
-       and the following disclaimer in the documentation and/or other materials provided with the distribution.
-
-    3. Neither the name of the copyright holder nor the names of its contributors may be used to endorse or promote 
-       products derived from this software without specific prior written permission.
-
-    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, 
-    INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. 
-    IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR 
-    CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; 
-    OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING 
-    NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+    
+    Licensed under the Network Next Source Available License 1.0
 */
 
 #include "next_tests.h"
@@ -1466,7 +1450,9 @@ void test_packet_filter()
 
         next_check( next_basic_packet_filter( output, packet_length ) );
 
+#if NEXT_ADVANCED_PACKET_FILTER
         next_check( next_advanced_packet_filter( output, magic, from_address, to_address, packet_length ) );
+#endif // #if NEXT_ADVANCED_PACKET_FILTER
     }
 }
 
@@ -1490,6 +1476,8 @@ void test_basic_packet_filter()
     }
     next_check( pass == 0 );
 }
+
+#if NEXT_ADVANCED_PACKET_FILTER
 
 void test_advanced_packet_filter()
 {
@@ -1519,6 +1507,8 @@ void test_advanced_packet_filter()
     next_check( pass == 0 );
 }
 
+#endif // #if NEXT_ADVANCED_PACKET_FILTER
+
 void test_passthrough()
 {
     uint8_t output[256];
@@ -1531,7 +1521,9 @@ void test_passthrough()
     next_crypto_random_bytes( to_address, 4 );
     int packet_length = sizeof(output);
     next_check( next_basic_packet_filter( output, packet_length ) );
+#if NEXT_ADVANCED_PACKET_FILTER
     next_check( next_advanced_packet_filter( output, magic, from_address, to_address, packet_length ) );
+#endif // #if NEXT_ADVANCED_PACKET_FILTER
 }
 
 void test_address_data_ipv4()
@@ -2223,6 +2215,10 @@ void test_relay_manager()
     uint8_t relay_ping_tokens[NEXT_MAX_CLIENT_RELAYS * NEXT_PING_TOKEN_BYTES];
     uint64_t relay_ping_expire_timestamp = 0x129387193871987LL;
 
+    memset( relay_ids, 0, sizeof(relay_ids) );
+    memset( relay_addresses, 0, sizeof(relay_addresses) );
+    memset( relay_ping_tokens, 0, sizeof(relay_ping_tokens) );
+
     for ( int i = 0; i < NEXT_MAX_CLIENT_RELAYS; ++i )
     {
         relay_ids[i] = i;
@@ -2335,7 +2331,10 @@ void test_direct_packet()
         next_check( packet_bytes <= NEXT_MTU + 27 );
 
         next_check( next_basic_packet_filter( packet_data, packet_bytes ) );
+
+#if NEXT_ADVANCED_PACKET_FILTER
         next_check( next_advanced_packet_filter( packet_data, magic, from_address, to_address, packet_bytes ) );
+#endif // #if NEXT_ADVANCED_PACKET_FILTER
 
         next_check( packet_data[0] == NEXT_DIRECT_PACKET );
         next_check( memcmp( packet_data + 18 + 1 + 8, game_packet_data, game_packet_bytes ) == 0 );
@@ -2382,7 +2381,10 @@ void test_direct_ping_packet()
         next_check( packet_bytes == 18 + 8 + 8 + 16 );
 
         next_check( next_basic_packet_filter( packet_data, packet_bytes ) );
+
+#if NEXT_ADVANCED_PACKET_FILTER
         next_check( next_advanced_packet_filter( packet_data, magic, from_address, to_address, packet_bytes ) );
+#endif // #if NEXT_ADVANCED_PACKET_FILTER
 
         NextDirectPingPacket out;
         uint64_t out_sequence = 0;
@@ -2428,7 +2430,10 @@ void test_direct_pong_packet()
         next_check( packet_bytes == 18 + 8 + 8 + 16 );
 
         next_check( next_basic_packet_filter( packet_data, packet_bytes ) );
+
+#if NEXT_ADVANCED_PACKET_FILTER
         next_check( next_advanced_packet_filter( packet_data, magic, from_address, to_address, packet_bytes ) );
+#endif // #if NEXT_ADVANCED_PACKET_FILTER
 
         NextDirectPongPacket out;
         uint64_t out_sequence = 0;
@@ -2480,7 +2485,10 @@ void test_upgrade_request_packet()
         next_check( result == NEXT_OK );
 
         next_check( next_basic_packet_filter( packet_data, packet_bytes ) );
+
+#if NEXT_ADVANCED_PACKET_FILTER
         next_check( next_advanced_packet_filter( packet_data, magic, from_address, to_address, packet_bytes ) );
+#endif // #if NEXT_ADVANCED_PACKET_FILTER
 
         const int begin = 18;
         const int end = packet_bytes;
@@ -2527,7 +2535,10 @@ void test_upgrade_response_packet()
         next_check( result == NEXT_OK );
 
         next_check( next_basic_packet_filter( packet_data, packet_bytes ) );
+
+#if NEXT_ADVANCED_PACKET_FILTER
         next_check( next_advanced_packet_filter( packet_data, magic, from_address, to_address, packet_bytes ) );
+#endif // #if NEXT_ADVANCED_PACKET_FILTER
 
         const int begin = 18;
         const int end = packet_bytes;
@@ -2574,7 +2585,10 @@ void test_upgrade_confirm_packet()
         next_check( result == NEXT_OK );
 
         next_check( next_basic_packet_filter( packet_data, packet_bytes ) );
+
+#if NEXT_ADVANCED_PACKET_FILTER
         next_check( next_advanced_packet_filter( packet_data, magic, from_address, to_address, packet_bytes ) );
+#endif // #if NEXT_ADVANCED_PACKET_FILTER
 
         const int begin = 18;
         const int end = packet_bytes;
@@ -2612,7 +2626,10 @@ void test_route_request_packet()
 
         next_check( packet_bytes > 0 );
         next_check( next_basic_packet_filter( packet_data, packet_bytes ) );
+
+#if NEXT_ADVANCED_PACKET_FILTER
         next_check( next_advanced_packet_filter( packet_data, magic, from_address, to_address, packet_bytes ) );
+#endif // #if NEXT_ADVANCED_PACKET_FILTER
 
         next_check( packet_data[0] == NEXT_ROUTE_REQUEST_PACKET );
         next_check( memcmp( packet_data + 18, token_data, token_bytes ) == 0 );
@@ -2643,7 +2660,10 @@ void test_route_response_packet()
         next_check( packet_bytes > 0 );
 
         next_check( next_basic_packet_filter( packet_data, packet_bytes ) );
+
+#if NEXT_ADVANCED_PACKET_FILTER
         next_check( next_advanced_packet_filter( packet_data, magic, from_address, to_address, packet_bytes ) );
+#endif // #if NEXT_ADVANCED_PACKET_FILTER
 
         next_check( packet_data[0] == NEXT_ROUTE_RESPONSE_PACKET );
 
@@ -2688,7 +2708,10 @@ void test_client_to_server_packet()
         int packet_bytes = next_write_client_to_server_packet( packet_data, send_sequence, session_id, session_version, private_key, game_packet_data, game_packet_bytes, magic, from_address, to_address );
         next_check( packet_bytes > 0 );
         next_check( next_basic_packet_filter( packet_data, packet_bytes ) );
+
+#if NEXT_ADVANCED_PACKET_FILTER
         next_check( next_advanced_packet_filter( packet_data, magic, from_address, to_address, packet_bytes ) );
+#endif // #if NEXT_ADVANCED_PACKET_FILTER
 
         next_check( packet_data[0] == NEXT_CLIENT_TO_SERVER_PACKET );
 
@@ -2737,7 +2760,10 @@ void test_server_to_client_packet()
         next_check( packet_bytes > 0 );
 
         next_check( next_basic_packet_filter( packet_data, packet_bytes ) );
+
+#if NEXT_ADVANCED_PACKET_FILTER
         next_check( next_advanced_packet_filter( packet_data, magic, from_address, to_address, packet_bytes ) );
+#endif // #if NEXT_ADVANCED_PACKET_FILTER
 
         next_check( packet_data[0] == NEXT_SERVER_TO_CLIENT_PACKET );
 
@@ -2783,7 +2809,10 @@ void test_session_ping_packet()
         next_check( packet_bytes > 0 );
 
         next_check( next_basic_packet_filter( packet_data, packet_bytes ) );
+
+#if NEXT_ADVANCED_PACKET_FILTER
         next_check( next_advanced_packet_filter( packet_data, magic, from_address, to_address, packet_bytes ) );
+#endif // #if NEXT_ADVANCED_PACKET_FILTER
 
         next_check( packet_data[0] == NEXT_SESSION_PING_PACKET );
 
@@ -2828,7 +2857,10 @@ void test_session_pong_packet()
         next_check( packet_bytes > 0 );
 
         next_check( next_basic_packet_filter( packet_data, packet_bytes ) );
+
+#if NEXT_ADVANCED_PACKET_FILTER
         next_check( next_advanced_packet_filter( packet_data, magic, from_address, to_address, packet_bytes ) );
+#endif // #if NEXT_ADVANCED_PACKET_FILTER
 
         next_check( packet_data[0] == NEXT_SESSION_PONG_PACKET );
 
@@ -2865,7 +2897,9 @@ void test_continue_request_packet()
         int packet_bytes = next_write_continue_request_packet( packet_data, token_data, token_bytes, magic, from_address, to_address );
         next_check( packet_bytes >= 0 );
         next_check( next_basic_packet_filter( packet_data, packet_bytes ) );
+#if NEXT_ADVANCED_PACKET_FILTER
         next_check( next_advanced_packet_filter( packet_data, magic, from_address, to_address, packet_bytes ) );
+#endif // #if NEXT_ADVANCED_PACKET_FILTER
         next_check( packet_data[0] == NEXT_CONTINUE_REQUEST_PACKET );
         next_check( memcmp( packet_data + 18, token_data, token_bytes ) == 0 );
     }
@@ -2895,7 +2929,9 @@ void test_continue_response_packet()
         next_check( packet_bytes > 0 );
 
         next_check( next_basic_packet_filter( packet_data, packet_bytes ) );
+#if NEXT_ADVANCED_PACKET_FILTER
         next_check( next_advanced_packet_filter( packet_data, magic, from_address, to_address, packet_bytes ) );
+#endif // #if NEXT_ADVANCED_PACKET_FILTER
 
         next_check( packet_data[0] == NEXT_CONTINUE_RESPONSE_PACKET );
 
@@ -2963,7 +2999,9 @@ void test_client_stats_packet_with_client_relays()
 
         next_check( packet_data[0] == NEXT_CLIENT_STATS_PACKET );
         next_check( next_basic_packet_filter( packet_data, packet_bytes ) );
+#if NEXT_ADVANCED_PACKET_FILTER
         next_check( next_advanced_packet_filter( packet_data, magic, from_address, to_address, packet_bytes ) );
+#endif // #if NEXT_ADVANCED_PACKET_FILTER
 
         uint64_t out_sequence = 0;
         const int begin = 18;
@@ -3038,7 +3076,9 @@ void test_client_stats_packet_without_client_relays()
 
         next_check( packet_data[0] == NEXT_CLIENT_STATS_PACKET );
         next_check( next_basic_packet_filter( packet_data, packet_bytes ) );
+#if NEXT_ADVANCED_PACKET_FILTER
         next_check( next_advanced_packet_filter( packet_data, magic, from_address, to_address, packet_bytes ) );
+#endif // #if NEXT_ADVANCED_PACKET_FILTER
 
         uint64_t out_sequence = 0;
         const int begin = 18;
@@ -3102,7 +3142,9 @@ void test_route_update_packet_direct()
 
         next_check( packet_data[0] == NEXT_ROUTE_UPDATE_PACKET );
         next_check( next_basic_packet_filter( packet_data, packet_bytes ) );
+#if NEXT_ADVANCED_PACKET_FILTER
         next_check( next_advanced_packet_filter( packet_data, magic, from_address, to_address, packet_bytes ) );
+#endif // #if NEXT_ADVANCED_PACKET_FILTER
 
         uint64_t out_sequence = 0;
         const int begin = 18;
@@ -3163,7 +3205,9 @@ void test_route_update_packet_new_route()
 
         next_check( packet_data[0] == NEXT_ROUTE_UPDATE_PACKET );
         next_check( next_basic_packet_filter( packet_data, packet_bytes ) );
+#if NEXT_ADVANCED_PACKET_FILTER
         next_check( next_advanced_packet_filter( packet_data, magic, from_address, to_address, packet_bytes ) );
+#endif // #if NEXT_ADVANCED_PACKET_FILTER
 
         uint64_t out_sequence = 0;
         const int begin = 18;
@@ -3221,7 +3265,9 @@ void test_route_update_packet_continue_route()
 
         next_check( packet_data[0] == NEXT_ROUTE_UPDATE_PACKET );
         next_check( next_basic_packet_filter( packet_data, packet_bytes ) );
+#if NEXT_ADVANCED_PACKET_FILTER
         next_check( next_advanced_packet_filter( packet_data, magic, from_address, to_address, packet_bytes ) );
+#endif // #if NEXT_ADVANCED_PACKET_FILTER
 
         uint64_t out_sequence = 0;
         const int begin = 18;
@@ -3270,7 +3316,9 @@ void test_route_ack_packet()
 
         next_check( packet_data[0] == NEXT_ROUTE_ACK_PACKET );
         next_check( next_basic_packet_filter( packet_data, packet_bytes ) );
+#if NEXT_ADVANCED_PACKET_FILTER
         next_check( next_advanced_packet_filter( packet_data, magic, from_address, to_address, packet_bytes ) );
+#endif // #if NEXT_ADVANCED_PACKET_FILTER
 
         uint64_t out_sequence = 0;
         const int begin = 18;
@@ -3319,7 +3367,9 @@ void test_client_relay_update_packet()
 
         next_check( packet_data[0] == NEXT_CLIENT_RELAY_UPDATE_PACKET );
         next_check( next_basic_packet_filter( packet_data, packet_bytes ) );
+#if NEXT_ADVANCED_PACKET_FILTER
         next_check( next_advanced_packet_filter( packet_data, magic, from_address, to_address, packet_bytes ) );
+#endif // #if NEXT_ADVANCED_PACKET_FILTER
 
         uint64_t out_sequence = 0;
         const int begin = 18;
@@ -3369,7 +3419,9 @@ void test_client_relay_ack_packet()
 
         next_check( packet_data[0] == NEXT_CLIENT_RELAY_ACK_PACKET );
         next_check( next_basic_packet_filter( packet_data, packet_bytes ) );
+#if NEXT_ADVANCED_PACKET_FILTER
         next_check( next_advanced_packet_filter( packet_data, magic, from_address, to_address, packet_bytes ) );
+#endif // #if NEXT_ADVANCED_PACKET_FILTER
 
         uint64_t out_sequence = 0;
         const int begin = 18;
@@ -3408,7 +3460,9 @@ void test_client_ping_packet()
         next_check( packet_bytes <= NEXT_MAX_PACKET_BYTES );
 
         next_check( next_basic_packet_filter( packet_data, packet_bytes ) );
+#if NEXT_ADVANCED_PACKET_FILTER
         next_check( next_advanced_packet_filter( packet_data, magic, from_address, to_address, packet_bytes ) );
+#endif // #if NEXT_ADVANCED_PACKET_FILTER
 
         next_check( packet_data[0] == NEXT_CLIENT_PING_PACKET );
 
@@ -3447,7 +3501,9 @@ void test_client_pong_packet()
         next_check( packet_bytes <= NEXT_MAX_PACKET_BYTES );
 
         next_check( next_basic_packet_filter( packet_data, packet_bytes ) );
+#if NEXT_ADVANCED_PACKET_FILTER
         next_check( next_advanced_packet_filter( packet_data, magic, from_address, to_address, packet_bytes ) );
+#endif // #if NEXT_ADVANCED_PACKET_FILTER
 
         next_check( packet_data[0] == NEXT_CLIENT_PONG_PACKET );
 
@@ -3485,7 +3541,9 @@ void test_server_ping_packet()
         next_check( packet_bytes <= NEXT_MAX_PACKET_BYTES );
 
         next_check( next_basic_packet_filter( packet_data, packet_bytes ) );
+#if NEXT_ADVANCED_PACKET_FILTER
         next_check( next_advanced_packet_filter( packet_data, magic, from_address, to_address, packet_bytes ) );
+#endif // #if NEXT_ADVANCED_PACKET_FILTER
 
         next_check( packet_data[0] == NEXT_SERVER_PING_PACKET );
 
@@ -3521,7 +3579,9 @@ void test_server_pong_packet()
         next_check( packet_bytes <= NEXT_MAX_PACKET_BYTES );
 
         next_check( next_basic_packet_filter( packet_data, packet_bytes ) );
+#if NEXT_ADVANCED_PACKET_FILTER
         next_check( next_advanced_packet_filter( packet_data, magic, from_address, to_address, packet_bytes ) );
+#endif // #if NEXT_ADVANCED_PACKET_FILTER
 
         next_check( packet_data[0] == NEXT_SERVER_PONG_PACKET );
 
@@ -3562,7 +3622,9 @@ void test_server_init_request_packet()
         next_check( packet_id == NEXT_BACKEND_SERVER_INIT_REQUEST_PACKET );
 
         next_check( next_basic_packet_filter( packet_data, packet_bytes ) );
+#if NEXT_ADVANCED_PACKET_FILTER
         next_check( next_advanced_packet_filter( packet_data, magic, from_address, to_address, packet_bytes ) );
+#endif // #if NEXT_ADVANCED_PACKET_FILTER
 
         const int begin = 18;
         const int end = packet_bytes;
@@ -3610,7 +3672,9 @@ void test_server_init_response_packet()
         next_check( packet_id == NEXT_BACKEND_SERVER_INIT_RESPONSE_PACKET );
 
         next_check( next_basic_packet_filter( packet_data, packet_bytes ) );
+#if NEXT_ADVANCED_PACKET_FILTER
         next_check( next_advanced_packet_filter( packet_data, magic, from_address, to_address, packet_bytes ) );
+#endif // #if NEXT_ADVANCED_PACKET_FILTER
 
         const int begin = 18;
         const int end = packet_bytes;
@@ -3657,7 +3721,9 @@ void test_server_update_request_packet()
         next_check( packet_id == NEXT_BACKEND_SERVER_UPDATE_REQUEST_PACKET );
 
         next_check( next_basic_packet_filter( packet_data, packet_bytes ) );
+#if NEXT_ADVANCED_PACKET_FILTER
         next_check( next_advanced_packet_filter( packet_data, magic, from_address, to_address, packet_bytes ) );
+#endif // #if NEXT_ADVANCED_PACKET_FILTER
 
         const int begin = 18;
         const int end = packet_bytes;
@@ -3706,7 +3772,9 @@ void test_server_update_response_packet()
         next_check( packet_id == NEXT_BACKEND_SERVER_UPDATE_RESPONSE_PACKET );
 
         next_check( next_basic_packet_filter( packet_data, packet_bytes ) );
+#if NEXT_ADVANCED_PACKET_FILTER
         next_check( next_advanced_packet_filter( packet_data, magic, from_address, to_address, packet_bytes ) );
+#endif // #if NEXT_ADVANCED_PACKET_FILTER
 
         const int begin = 18;
         const int end = packet_bytes;
@@ -3803,7 +3871,9 @@ void test_session_update_request_packet()
         next_check( packet_id == NEXT_BACKEND_SESSION_UPDATE_REQUEST_PACKET );
 
         next_check( next_basic_packet_filter( packet_data, packet_bytes ) );
+#if NEXT_ADVANCED_PACKET_FILTER
         next_check( next_advanced_packet_filter( packet_data, magic, from_address, to_address, packet_bytes ) );
+#endif // #if NEXT_ADVANCED_PACKET_FILTER
 
         const int begin = 18;
         const int end = packet_bytes;
@@ -3898,7 +3968,9 @@ void test_session_update_response_packet_direct()
         next_check( packet_id == NEXT_BACKEND_SESSION_UPDATE_RESPONSE_PACKET );
 
         next_check( next_basic_packet_filter( packet_data, packet_bytes ) );
+#if NEXT_ADVANCED_PACKET_FILTER
         next_check( next_advanced_packet_filter( packet_data, magic, from_address, to_address, packet_bytes ) );
+#endif // #if NEXT_ADVANCED_PACKET_FILTER
 
         const int begin = 18;
         const int end = packet_bytes;
@@ -3951,7 +4023,9 @@ void test_session_update_response_packet_route()
         next_check( packet_id == NEXT_BACKEND_SESSION_UPDATE_RESPONSE_PACKET );
 
         next_check( next_basic_packet_filter( packet_data, packet_bytes ) );
+#if NEXT_ADVANCED_PACKET_FILTER
         next_check( next_advanced_packet_filter( packet_data, magic, from_address, to_address, packet_bytes ) );
+#endif // #if NEXT_ADVANCED_PACKET_FILTER
 
         const int begin = 18;
         const int end = packet_bytes;
@@ -4010,7 +4084,9 @@ void test_session_update_response_packet_continue()
         next_check( packet_id == NEXT_BACKEND_SESSION_UPDATE_RESPONSE_PACKET );
 
         next_check( next_basic_packet_filter( packet_data, packet_bytes ) );
+#if NEXT_ADVANCED_PACKET_FILTER
         next_check( next_advanced_packet_filter( packet_data, magic, from_address, to_address, packet_bytes ) );
+#endif // #if NEXT_ADVANCED_PACKET_FILTER
 
         const int begin = 18;
         const int end = packet_bytes;
@@ -4066,7 +4142,9 @@ void test_client_relay_request_packet()
         next_check( packet_id == NEXT_BACKEND_CLIENT_RELAY_REQUEST_PACKET );
 
         next_check( next_basic_packet_filter( packet_data, packet_bytes ) );
+#if NEXT_ADVANCED_PACKET_FILTER
         next_check( next_advanced_packet_filter( packet_data, magic, from_address, to_address, packet_bytes ) );
+#endif // #if NEXT_ADVANCED_PACKET_FILTER
 
         const int begin = 18;
         const int end = packet_bytes;
@@ -4121,7 +4199,9 @@ void test_client_relay_response_packet()
         next_check( packet_id == NEXT_BACKEND_CLIENT_RELAY_RESPONSE_PACKET );
 
         next_check( next_basic_packet_filter( packet_data, packet_bytes ) );
+#if NEXT_ADVANCED_PACKET_FILTER
         next_check( next_advanced_packet_filter( packet_data, magic, from_address, to_address, packet_bytes ) );
+#endif // #if NEXT_ADVANCED_PACKET_FILTER
 
         const int begin = 18;
         const int end = packet_bytes;
@@ -4172,7 +4252,9 @@ void test_server_relay_request_packet()
         next_check( packet_id == NEXT_BACKEND_SERVER_RELAY_REQUEST_PACKET );
 
         next_check( next_basic_packet_filter( packet_data, packet_bytes ) );
+#if NEXT_ADVANCED_PACKET_FILTER
         next_check( next_advanced_packet_filter( packet_data, magic, from_address, to_address, packet_bytes ) );
+#endif // #if NEXT_ADVANCED_PACKET_FILTER
 
         const int begin = 18;
         const int end = packet_bytes;
@@ -4223,7 +4305,9 @@ void test_server_relay_response_packet()
         next_check( packet_id == NEXT_BACKEND_SERVER_RELAY_RESPONSE_PACKET );
 
         next_check( next_basic_packet_filter( packet_data, packet_bytes ) );
+#if NEXT_ADVANCED_PACKET_FILTER
         next_check( next_advanced_packet_filter( packet_data, magic, from_address, to_address, packet_bytes ) );
+#endif // #if NEXT_ADVANCED_PACKET_FILTER
 
         const int begin = 18;
         const int end = packet_bytes;
@@ -4387,7 +4471,9 @@ void next_run_tests()
         RUN_TEST( test_abi );
         RUN_TEST( test_packet_filter );
         RUN_TEST( test_basic_packet_filter );
+#if NEXT_ADVANCED_PACKET_FILTER
         RUN_TEST( test_advanced_packet_filter );
+#endif // #if NEXT_ADVANCED_PACKET_FILTER
         RUN_TEST( test_passthrough );
         RUN_TEST( test_address_data_ipv4 );
         RUN_TEST( test_anonymize_address_ipv4 );
