@@ -26,6 +26,10 @@
 #include "next_platform.h"
 #include "next_base64.h"
 
+#ifdef SetPort
+#undef SetPort
+#endif // #ifdef SetPort
+
 FNetworkNextSocketServer::FNetworkNextSocketServer(const FString& InSocketDescription, const FName& InSocketProtocol)
     : FNetworkNextSocket(ENetworkNextSocketType::TYPE_Server, InSocketDescription, InSocketProtocol)
 {
