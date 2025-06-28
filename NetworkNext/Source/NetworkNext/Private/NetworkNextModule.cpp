@@ -118,3 +118,31 @@ void FNetworkNextModule::Free(void* context, void* src)
 {
     return FMemory::Free(src);
 }
+
+void FNetworkNextModule::UpgradePlayer(APlayerController* PlayerController, const FString& UserId)
+{
+    if (PlayerController == nullptr)
+        return;
+
+    UWorld* World = PlayerController->GetWorld();
+
+    if (World == nullptr)
+        return;
+
+    UNetworkNextNetDriver* NetDriver = Cast<UNetworkNextNetDriver>(World->GetNetDriver());
+
+    if (NetDriver == nullptr)
+        return;
+
+    FNetworkNextSocketServer* ServerSocket = NetDriver->GetServerSocket();
+
+    if (ServerSocket == nullptr)
+        return;
+
+    UNetConnection* Connection = PlayerController->GetNetConnection();
+
+    if (Connection == nullptr)
+        return;
+
+    ServerSocket->UpgradeClient(Connection->GetRemoteAddr(), UserId);
+}

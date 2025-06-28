@@ -45,6 +45,10 @@ public:
         return false;
     };
 
+    // Network Next Plugin API for C++
+
+    NETWORKNEXT_API static void UpgradePlayer(APlayerController* PlayerController, const FString& UserId);
+
 private:
 
     /** The static handler for logs from the Network Next SDK */
