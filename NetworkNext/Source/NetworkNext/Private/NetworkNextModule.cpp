@@ -39,11 +39,9 @@ void FNetworkNextModule::StartupModule()
 	next_config_t config;
 	next_default_config( &config );
 
-	// IMPORTANT: Enter your buyer public key here. It is safe for this to be included in your client executable.
-	const char * buyer_public_key = "zkaPRGcAuThG6poXMJ8di/yKzgZEbqyQ6Ky951reRq4sgCm83lV24g==";
+	const char * buyer_public_key = "pTajZoYIAqBcMcYIz97X2hh2sDb/0Oe3S6bFmxc0v6IiCnjNQZJ1sQ==";
 
-	// IMPORTANT: You must pass in your buyer private key on the command line to enable acceleration.
-	// It is not safe to include the buyer private key in your executable, nor should it be checked in.
+    // IMPORTANT: If you don't want to pass "BuyerPrivateKey" via server-only INI file, you can pass it via command line below
     FString BuyerPrivateKey;
     if (FParse::Value(FCommandLine::Get(), TEXT("-buyerPrivateKey="), BuyerPrivateKey))
     {
