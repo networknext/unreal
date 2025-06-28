@@ -71,7 +71,7 @@ bool FNetworkNextSocketClient::Close()
 bool FNetworkNextSocketClient::Bind(const FInternetAddr& Addr)
 {
     // Always bind client sockets to 0.0.0.0:0. The Network Next SDK takes care of enabling dual stack where possible *and* selecting the best port.
-	// On GDK platforms (XBoxOne, SeriesX), the preferred game port is used. This provides access to WMM and DSCP packet tagging on Xbox platforms.
+    // On GDK platforms (XBoxOne, SeriesX), the preferred game port is used. This provides access to WMM and DSCP packet tagging on Xbox platforms.
     char BindAddress[256];
     TCString<char>::Sprintf(BindAddress, "0.0.0.0:0");
 
@@ -108,7 +108,7 @@ void FNetworkNextSocketClient::NetworkNextConnect(const FString& Host, int32 Por
         return;
     }
 
-	char server_address_buffer[NEXT_MAX_ADDRESS_STRING_LENGTH];
+    char server_address_buffer[NEXT_MAX_ADDRESS_STRING_LENGTH];
     memset(server_address_buffer, 0, sizeof(server_address_buffer));
     snprintf(server_address_buffer, sizeof(server_address_buffer), "%s:%d", TCHAR_TO_ANSI(*Host), Port);
 
@@ -126,7 +126,7 @@ bool FNetworkNextSocketClient::SendTo(const uint8* Data, int32 Count, int32& Byt
     if (!NetworkNextClient)
         return false;
 
-	next_client_send_packet(NetworkNextClient, Data, Count);
+    next_client_send_packet(NetworkNextClient, Data, Count);
 
     BytesSent = Count;
 
@@ -173,7 +173,7 @@ bool FNetworkNextSocketClient::RecvFrom(uint8* Data, int32 BufferSize, int32& By
     FMemory::Free(Packet.packet_data);
 
     // Packets *only* come from the server
-	#undef SetPort
+    #undef SetPort
     bool bIsValid;
     Source.SetPort(ServerPort);
     Source.SetIp(*ServerAddr, bIsValid);

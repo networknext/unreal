@@ -23,6 +23,7 @@
 #include "NetworkNextModule.h"
 #include "NetworkNextNetDriver.h"
 #include "NetworkNextSocketSubsystem.h"
+#include "NetworkNextSocketServer.h"
 #include "Core.h"
 #include "next.h"
 
@@ -36,17 +37,16 @@ void FNetworkNextModule::StartupModule()
 
     m_initialized_sdk = false;
 
-	next_config_t config;
-	next_default_config( &config );
+    next_config_t config;
+    next_default_config( &config );
 
-	const char * buyer_public_key = "pTajZoYIAqBcMcYIz97X2hh2sDb/0Oe3S6bFmxc0v6IiCnjNQZJ1sQ==";
+    const char * buyer_public_key = "pTajZoYIAqBcMcYIz97X2hh2sDb/0Oe3S6bFmxc0v6IiCnjNQZJ1sQ==";
+    const char * buyer_private_key = "pTajZoYIAqANNNVDMeMyeQ2w3njsFocUQ+eWrVVVqUkY92TjE830u1wxxgjP3tfaGHawNv/Q57dLpsWbFzS/oiIKeM1BknWx";
 
-    // IMPORTANT: If you don't want to pass "BuyerPrivateKey" via server-only INI file, you can pass it via command line below
-    FString BuyerPrivateKey;
-    if (FParse::Value(FCommandLine::Get(), TEXT("-buyerPrivateKey="), BuyerPrivateKey))
-    {
-        next_copy_string(config.buyer_private_key, TCHAR_TO_ANSI(*BuyerPrivateKey), sizeof(config.buyer_private_key));
-    }
+    next_copy_string(config.buyer_public_key, buyer_public_key, sizeof(config.buyer_public_key));
+    next_copy_string(config.buyer_private_key, buyer_private_key, sizeof(config.buyer_private_key));
+
+    next_log_level(NEXT_LOG_LEVEL_DEBUG);
 
     if (next_init(NULL, &config) != NEXT_OK)
     {
@@ -117,30 +117,49 @@ void FNetworkNextModule::Free(void* context, void* src)
     return FMemory::Free(src);
 }
 
-void FNetworkNextModule::UpgradePlayer(APlayerController* PlayerController, const FString& UserId)
+void FNetworkNextModule::UpgradePlayer(AController* Controller, const FString& UserId)
 {
-    if (PlayerController == nullptr)
-        return;
+    UE_LOG(LogNetworkNext, Display, TEXT("FNetworkNextModule::UpgradePlayer"));
 
-    UWorld* World = PlayerController->GetWorld();
+    if (Controller == nullptr)
+    {
+        UE_LOG(LogNetworkNext, Display, TEXT("Controller is NULL"));
+        return;
+    }
+
+    UWorld* World = Controller->GetWorld();
 
     if (World == nullptr)
+    {
+        UE_LOG(LogNetworkNext, Display, TEXT("World is NULL"));
         return;
+    }
 
     UNetworkNextNetDriver* NetDriver = Cast<UNetworkNextNetDriver>(World->GetNetDriver());
 
     if (NetDriver == nullptr)
+    {
+        UE_LOG(LogNetworkNext, Display, TEXT("NetDriver is NULL"));
         return;
+    }
 
     FNetworkNextSocketServer* ServerSocket = NetDriver->GetServerSocket();
 
     if (ServerSocket == nullptr)
+    {
+        UE_LOG(LogNetworkNext, Display, TEXT("ServerSocket is NULL"));
         return;
+    }
 
-    UNetConnection* Connection = PlayerController->GetNetConnection();
+    UNetConnection* Connection = Controller->GetNetConnection();
 
     if (Connection == nullptr)
+    {
+        UE_LOG(LogNetworkNext, Display, TEXT("Connection is NULL"));
         return;
+    }
 
     ServerSocket->UpgradeClient(Connection->GetRemoteAddr(), UserId);
+
+    UE_LOG(LogNetworkNext, Display, TEXT("Upgraded Player!"));
 }

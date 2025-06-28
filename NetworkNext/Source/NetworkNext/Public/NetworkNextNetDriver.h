@@ -32,6 +32,8 @@ class FNetworkNotify;
 UCLASS(transient, config = Engine)
 class UNetworkNextNetDriver : public UIpNetDriver
 {
+public:
+
     GENERATED_BODY()
 
     virtual class ISocketSubsystem* GetSocketSubsystem() override;
@@ -44,8 +46,6 @@ class UNetworkNextNetDriver : public UIpNetDriver
 
     bool IsClient() const;
     bool IsServer() const;
-
-protected:
 
     class FNetworkNextSocketClient* GetClientSocket();
     class FNetworkNextSocketServer* GetServerSocket();
